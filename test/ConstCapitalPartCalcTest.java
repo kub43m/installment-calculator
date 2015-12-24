@@ -1,10 +1,8 @@
 import calculation.*;
 import org.junit.Test;
 import java.util.*;
-
 import static org.junit.Assert.*;
 
-import static org.junit.Assert.*;
 
 /**
  * Created by Kuba on 12/23/2015.

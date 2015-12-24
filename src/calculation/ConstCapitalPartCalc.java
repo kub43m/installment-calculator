@@ -30,7 +30,8 @@ public class ConstCapitalPartCalc implements Calculation {
         return noPeriods;
     }
 
-    private CalcResult calculate(double debt, double rate, int noPeriods) {
+    @Override
+    public CalcResult calculate() {
 
         double debtOutstanding = debt;
         double capitalPart = debt / noPeriods;
@@ -49,11 +50,6 @@ public class ConstCapitalPartCalc implements Calculation {
         calcResult.setInstallmentSum(totalInstallment);
         calcResult.setInterestSum(totalInterest);
         return calcResult;
-    }
-
-    @Override
-    public CalcResult calculate(){
-        return calculate(debt, rate, noPeriods);
     }
 
 }
