@@ -22,7 +22,7 @@ public class CalcDispatcher {
 
         switch (repaymentType){
             case CONSTANT_CAPITAL_PART: calc = new ConstCapitalPartCalc(debt, rate, noPeriods); break;
-            case CONSTANT_INSTALLMENT:  calc = new ConstantInstallmentCalc(debt, rate, noPeriods); break;
+            case CONSTANT_INSTALLMENT:  calc = new ConstInstallmentCalc(debt, rate, noPeriods); break;
         }
 
         return  calc.calculate();

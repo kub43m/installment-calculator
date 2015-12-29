@@ -3,7 +3,7 @@ package calculation;
 /**
  * Created by Kuba on 12/23/2015.
  */
-public class ConstantInstallmentCalc implements Calculation{
+public class ConstInstallmentCalc implements Calculation{
     //double debt, double rate, int noPeriods, CalcPeriodInputType type
     private double debt;
     private double rate;
@@ -12,7 +12,7 @@ public class ConstantInstallmentCalc implements Calculation{
     private double totalInterest = 0.0d;
     private CalcResult calcResult = new CalcResult();
 
-    public ConstantInstallmentCalc(double debt, double rate, int noPeriods) {
+    public ConstInstallmentCalc(double debt, double rate, int noPeriods) {
         this.debt = debt;
         this.rate = rate;
         this.noPeriods = noPeriods;

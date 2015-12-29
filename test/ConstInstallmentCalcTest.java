@@ -1,5 +1,4 @@
 import calculation.*;
-import org.junit.Assert;
 import org.junit.Test;
 
 import java.util.List;
@@ -14,7 +13,7 @@ public class ConstInstallmentCalcTest {
 
     @Test
     public void testConstructor() throws Exception {
-        ConstantInstallmentCalc cic = new ConstantInstallmentCalc(1000.0d, 0.1d, 4);
+        ConstInstallmentCalc cic = new ConstInstallmentCalc(1000.0d, 0.1d, 4);
         assertEquals(1000.0d, cic.getDebt(), 0.000001d);
         assertEquals(0.1d, cic.getRate(), 0.000001d);
         assertEquals(4, cic.getNoPeriods());
@@ -22,7 +21,7 @@ public class ConstInstallmentCalcTest {
 
     @Test
     public void testCalculate() throws Exception {
-        ConstantInstallmentCalc cic = new ConstantInstallmentCalc(1000.0d, 0.1d, 4);
+        ConstInstallmentCalc cic = new ConstInstallmentCalc(1000.0d, 0.1d, 4);
         CalcResult cr = cic.calculate();
         assertEquals(261.883730d, cr.getInterestSum(), 0.001d);
         assertEquals(1261.883730d, cr.getInstallmentSum(), 0.001d);
@@ -44,13 +43,13 @@ public class ConstInstallmentCalcTest {
 
     @Test
     public void testGeomSeriesSum() throws Exception {
-        ConstantInstallmentCalc cic = new ConstantInstallmentCalc(1000.0d, 0.1d, 4);
+        ConstInstallmentCalc cic = new ConstInstallmentCalc(1000.0d, 0.1d, 4);
         assertEquals(3.169865, cic.geomSeriesSum(1/(1+0.1), 1/(1+0.1), 4), 0.000001);
     }
 
     @Test
     public void testCalcInstallment() throws Exception {
-        ConstantInstallmentCalc cic = new ConstantInstallmentCalc(1000.0d, 0.1d, 4);
+        ConstInstallmentCalc cic = new ConstInstallmentCalc(1000.0d, 0.1d, 4);
         assertEquals(315.470804d, cic.calcInstallment(), 0.000001d);
     }
 }
