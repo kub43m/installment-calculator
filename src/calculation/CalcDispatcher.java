@@ -6,17 +6,17 @@ package calculation;
 public class CalcDispatcher {
 
     public static CalcResult calculate(double debt, double rate, int noPeriods,
-        CalcRepaymentType repaymentType, CalcPeriodInputType periodInput, CalcInterestAccrualRate accrualRate)
+        CalcRepaymentType repaymentType, CalcPeriodInputType periodInput, CalcRepaymentFrequency accrualRate)
     {
 
         Calculation calc = null;
 
-        if (periodInput == CalcPeriodInputType.YEAR && accrualRate == CalcInterestAccrualRate.MONTHLY){
+        if (periodInput == CalcPeriodInputType.YEAR && accrualRate == CalcRepaymentFrequency.MONTHLY){
             noPeriods *= 12;
             rate /= 12;
-        } else if (periodInput == CalcPeriodInputType.MONTH && accrualRate == CalcInterestAccrualRate.MONTHLY){
+        } else if (periodInput == CalcPeriodInputType.MONTH && accrualRate == CalcRepaymentFrequency.MONTHLY){
             rate /= 12;
-        } else if (periodInput == CalcPeriodInputType.MONTH && accrualRate == CalcInterestAccrualRate.YEARLY)
+        } else if (periodInput == CalcPeriodInputType.MONTH && accrualRate == CalcRepaymentFrequency.YEARLY)
             throw new RuntimeException("Input in months and yearly interest accrual not allowed.");
         //w przeciwnym wypadku mamy input in YEARs i YEARLY interest accrual -> nie modyfikujemy rate ani noPeriods
 
