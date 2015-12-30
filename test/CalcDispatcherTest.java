@@ -161,4 +161,80 @@ public class CalcDispatcherTest {
         }
     }
 
+
+
+    //CapitalAndInterestAtEndCalcTest
+    //Input: year, repayment freq: yearly
+    @Test
+    public void testCalculateCapitalAndInterestAtEnd1() throws Exception {
+        CalcResult cr = CalcDispatcher.calculate(1000.0d, 0.1d, 4, CalcRepaymentType.CAPITAL_AND_INTEREST_AT_END, CalcPeriodInputType.YEAR, CalcRepaymentFrequency.YEARLY);
+        assertEquals(cr.getInterestSum(), 464.1d, 0.000001d);
+        assertEquals(cr.getInstallmentSum(), 1464.1d, 0.000001d);
+        List<CalcTableItem> ct = cr.getCalcTable();
+
+        int i = 1;
+        double[] debtOutstanding = new double[] {1000.0d, 1100.0d, 1210.0d, 1331.0d};
+        double[] interest = new double[]{100.0d, 110.0d, 121.0d, 133.1d};
+        double capitalPart[] = new double[]{0.0d, 0.0d, 0.0d, 1331.0};
+        double installment[] = new double[]{0.0d, 0.0d, 0.0d, 1464.1d};
+        for (CalcTableItem cti : ct) {
+            assertEquals(i, cti.getPeriod());
+            assertEquals(debtOutstanding[i-1], cti.getDebt(), 0.000001d);
+            assertEquals(interest[i-1], cti.getInterest(), 0.000001d);
+            assertEquals(capitalPart[i-1], cti.getCapitalPart(), 0.000001d);
+            assertEquals(installment[i-1], cti.getInstallment(), 0.000001d);
+            i++;
+        }
+    }
+
+    //CapitalAndInterestAtEndCalcTest
+    //Input: year, repayment freq: monthly
+    @Test
+    public void testCalculateCapitalAndInterestAtEnd2() throws Exception {
+        CalcResult cr = CalcDispatcher.calculate(1000.0d, 0.1d, 1, CalcRepaymentType.CAPITAL_AND_INTEREST_AT_END, CalcPeriodInputType.YEAR, CalcRepaymentFrequency.MONTHLY);
+        assertEquals(cr.getInterestSum(), 104.713067d, 0.000001d);
+        assertEquals(cr.getInstallmentSum(), 1104.713067d, 0.000001d);
+        List<CalcTableItem> ct = cr.getCalcTable();
+
+        int i = 1;
+        double[] debtOutstanding = new double[] {1000.0d, 1008.333333d, 1016.736111d, 1025.208912d, 1033.752320d,
+                1042.366922d, 1051.053313d, 1059.812091d, 1068.643858d, 1077.549224d, 1086.528801d, 1095.583207d};
+        double[] interest = new double[] {8.333333d, 8.402778d, 8.472801d, 8.543408d, 8.614603d, 8.686391d, 8.758778d,
+                8.831767d, 8.905365d, 8.979577d, 9.054407d, 9.129860d};
+        double capitalPart[] = new double[]{0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 1095.583207d};
+        double installment[] = new double[]{0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 1104.713067d};
+        for (CalcTableItem cti : ct) {
+            assertEquals(i, cti.getPeriod());
+            assertEquals(debtOutstanding[i-1], cti.getDebt(), 0.000001d);
+            assertEquals(interest[i-1], cti.getInterest(), 0.000001d);
+            assertEquals(capitalPart[i-1], cti.getCapitalPart(), 0.000001d);
+            assertEquals(installment[i-1], cti.getInstallment(), 0.000001d);
+            i++;
+        }
+    }
+
+    //CapitalAndInterestAtEndCalcTest
+    //Input: month, repayment freq: monthly
+    @Test
+    public void testCalculateCapitalAndInterestAtEnd3() throws Exception {
+        CalcResult cr = CalcDispatcher.calculate(1000.0d, 0.1d, 6, CalcRepaymentType.CAPITAL_AND_INTEREST_AT_END, CalcPeriodInputType.MONTH, CalcRepaymentFrequency.MONTHLY);
+        assertEquals(cr.getInterestSum(), 51.053313d, 0.000001d);
+        assertEquals(cr.getInstallmentSum(), 1051.053313, 0.000001d);
+        List<CalcTableItem> ct = cr.getCalcTable();
+
+        int i = 1;
+        double[] debtOutstanding = new double[] {1000.0d, 1008.333333d, 1016.736111d, 1025.208912d, 1033.752320d,
+                1042.366922d};
+        double[] interest = new double[] {8.333333d, 8.402778d, 8.472801d, 8.543408d, 8.614603d, 8.686391d};
+        double capitalPart[] = new double[]{0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 1042.366922d};
+        double installment[] = new double[]{0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 1051.053313d};
+        for (CalcTableItem cti : ct) {
+            assertEquals(i, cti.getPeriod());
+            assertEquals(debtOutstanding[i-1], cti.getDebt(), 0.000001d);
+            assertEquals(interest[i-1], cti.getInterest(), 0.000001d);
+            assertEquals(capitalPart[i-1], cti.getCapitalPart(), 0.000001d);
+            assertEquals(installment[i-1], cti.getInstallment(), 0.000001d);
+            i++;
+        }
+    }
 }
