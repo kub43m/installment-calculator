@@ -10,6 +10,8 @@ import static org.junit.Assert.*;
  */
 public class CapitalAndInterestAtEndCalcTest {
 
+    //values for this test can be found in the accompanying excel spreadsheet "loan_repayment_examples",
+    //sheet: 1.CapitalAndInterestAtEnd
     @Test
     public void testCalculate() throws Exception {
         Calculation calc = new CapitalAndInterestAtEndCalc(1000.0d, 0.1d, 4);

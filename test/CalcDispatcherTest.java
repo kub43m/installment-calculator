@@ -8,7 +8,16 @@ import static org.junit.Assert.*;
 /**
  * Created by Kuba on 2015-12-29.
  */
+
+//values for these tests can be found in the accompanying excel spreadsheet "loan_repayment_examples",
+//sheets: 1.CapitalAndInterestAtEnd, 2.CapitalAtEndInterestPerPeriod, 3.ConstantCapitalPart and 4.ConstantInstallment
 public class CalcDispatcherTest {
+
+    /* *******************************
+     *                               *
+     *      ConstInstallmentCalc     *
+     *                               *
+     *********************************/
 
     //ConstInstallmentCalcTest
     //Input: year, repayment freq: yearly
@@ -89,6 +98,12 @@ public class CalcDispatcherTest {
 
 
 
+    /* *******************************
+     *                               *
+     *      ConstCapitalPartCalc     *
+     *                               *
+     *********************************/
+
     //ConstCapitalPartCalcTest
     //Input: year, repayment freq: yearly
     @Test
@@ -111,7 +126,6 @@ public class CalcDispatcherTest {
             i++;
         }
     }
-
 
     //ConstCapitalPartCalcTest
     //Input: year, repayment freq: monthly
@@ -162,6 +176,12 @@ public class CalcDispatcherTest {
     }
 
 
+
+    /* **************************************
+     *                                      *
+     *      CapitalAndInterestAtEndCalc     *
+     *                                      *
+     ****************************************/
 
     //CapitalAndInterestAtEndCalcTest
     //Input: year, repayment freq: yearly
@@ -237,4 +257,85 @@ public class CalcDispatcherTest {
             i++;
         }
     }
+
+
+
+    /* ********************************************
+     *                                            *
+     *      CapitalAtEndInterestPerPeriodCalc     *
+     *                                            *
+     **********************************************/
+
+    //CapitalAtEndInterestPerPeriodCalcTest
+    //Input: year, repayment freq: yearly
+    @Test
+    public void testCalculateCapitalAtEndInterestPerPeriod1() throws Exception {
+        CalcResult cr = CalcDispatcher.calculate(1000.0d, 0.1d, 4, CalcRepaymentType.CAPITAL_AT_END_INTEREST_PER_PERIOD, CalcPeriodInputType.YEAR, CalcRepaymentFrequency.YEARLY);
+        assertEquals(400.0d, cr.getInterestSum(), 0.000001d);
+        assertEquals(1400.0d, cr.getInstallmentSum(), 0.000001d);
+        List<CalcTableItem> ct = cr.getCalcTable();
+
+        int i = 1;
+        double[] debtOutstanding = new double[] {1000.0d, 1000.0d, 1000.0d, 1000.0d};
+        double[] interest = new double[]{100.0d, 100.0d, 100.0d, 100.0d};
+        double capitalPart[] = new double[]{0.0d, 0.0d, 0.0d, 1000.0d};
+        for (CalcTableItem cti : ct) {
+            assertEquals(i, cti.getPeriod());
+            assertEquals(debtOutstanding[i-1], cti.getDebt(), 0.000001d);
+            assertEquals(interest[i-1], cti.getInterest(), 0.000001d);
+            assertEquals(capitalPart[i-1], cti.getCapitalPart(), 0.000001d);
+            assertEquals(interest[i-1] + capitalPart[i-1], cti.getInstallment(), 0.000001d);
+            i++;
+        }
+    }
+
+    //CapitalAtEndInterestPerPeriodCalcTest
+    //Input: year, repayment freq: monthly
+    @Test
+    public void testCalculateCapitalAtEndInterestPerPeriod2() throws Exception {
+        CalcResult cr = CalcDispatcher.calculate(1000.0d, 0.1d, 1, CalcRepaymentType.CAPITAL_AT_END_INTEREST_PER_PERIOD, CalcPeriodInputType.YEAR, CalcRepaymentFrequency.MONTHLY);
+        assertEquals(100.0d, cr.getInterestSum(), 0.000001d);
+        assertEquals(1100.0d, cr.getInstallmentSum(), 0.000001d);
+        List<CalcTableItem> ct = cr.getCalcTable();
+
+        int i = 1;
+        double[] debtOutstanding = new double[] {1000.0d, 1000.0d, 1000.0d, 1000.0d, 1000.0d, 1000.0d, 1000.0d,
+                1000.0d, 1000.0d, 1000.0d, 1000.0d, 1000.0d};
+        double[] interest = new double[]{8.333333d, 8.333333d, 8.333333d, 8.333333d, 8.333333d, 8.333333d,
+                8.333333d, 8.333333d, 8.333333d, 8.333333d, 8.333333d, 8.333333d};
+        double capitalPart[] = new double[]{0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 1000.0d};
+        for (CalcTableItem cti : ct) {
+            assertEquals(i, cti.getPeriod());
+            assertEquals(debtOutstanding[i-1], cti.getDebt(), 0.000001d);
+            assertEquals(interest[i-1], cti.getInterest(), 0.000001d);
+            assertEquals(capitalPart[i-1], cti.getCapitalPart(), 0.000001d);
+            assertEquals(interest[i-1] + capitalPart[i-1], cti.getInstallment(), 0.000001d);
+            i++;
+        }
+    }
+
+    //CapitalAtEndInterestPerPeriodCalcTest
+    //Input: month, repayment freq: monthly
+    @Test
+    public void testCalculateCapitalAtEndInterestPerPeriod3() throws Exception {
+        CalcResult cr = CalcDispatcher.calculate(1000.0d, 0.1d, 6, CalcRepaymentType.CAPITAL_AT_END_INTEREST_PER_PERIOD, CalcPeriodInputType.MONTH, CalcRepaymentFrequency.MONTHLY);
+        assertEquals(50.0d, cr.getInterestSum(), 0.000001d);
+        assertEquals(1050.0d, cr.getInstallmentSum(), 0.000001d);
+        List<CalcTableItem> ct = cr.getCalcTable();
+
+        int i = 1;
+        double[] debtOutstanding = new double[] {1000.0d, 1000.0d, 1000.0d, 1000.0d, 1000.0d, 1000.0d};
+        double[] interest = new double[]{8.333333d, 8.333333d, 8.333333d, 8.333333d, 8.333333d, 8.333333d};
+        double capitalPart[] = new double[]{0.0d, 0.0d, 0.0d, 0.0d, 0.0d, 1000.0d};
+        for (CalcTableItem cti : ct) {
+            assertEquals(i, cti.getPeriod());
+            assertEquals(debtOutstanding[i-1], cti.getDebt(), 0.000001d);
+            assertEquals(interest[i-1], cti.getInterest(), 0.000001d);
+            assertEquals(capitalPart[i-1], cti.getCapitalPart(), 0.000001d);
+            assertEquals(interest[i-1] + capitalPart[i-1], cti.getInstallment(), 0.000001d);
+            i++;
+        }
+    }
+
+
 }
