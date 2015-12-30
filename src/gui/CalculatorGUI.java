@@ -3,9 +3,15 @@ package gui;
 import calculation.*;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableColumnModel;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.text.NumberFormat;
+import java.util.List;
+import javax.swing.table.AbstractTableModel;
 
 /**
  * Created by Kuba on 12/27/2015.
@@ -17,13 +23,19 @@ public class CalculatorGUI {
     private double rate = 0.1;
     private int noPeriods = 30;
 
+    //general frames and dialogs
     private JFrame mainFrame;
+    private static String mainFrameTitleString = "Installment Calculator";
     private JPanel mainPanel;
     private JPanel inputPanel;
     private JPanel resultsPanel;
     private static String resultsString = "Results:";
+    private DetailsDialog detailsDialog;
 
-    /* ***    INPUT   *** */
+
+    /* *******************
+     ***     INPUT     ***
+     *********************/
     //debt value:
     private JPanel debtValPanel;
     private JFormattedTextField debtField;
@@ -72,14 +84,19 @@ public class CalculatorGUI {
     private static String calculateButtonString = "Calculate";
     private static String detailsButtonString = "Installment Details";
 
-    /* ***    RESULTS   *** */
+
+    /* *********************
+     ***     RESULTS     ***
+     ***********************/
+    //CalcResult object:
+    CalcResult calcResult;
+
     //total repayment
     private JPanel totRepPanel;
     private JLabel totRepLabel;
     private static String totRepString = "Total repayment: ";
     private JFormattedTextField totRepField;
     private NumberFormat totRepFormat;
-//    private NumberFormatter totRepFormatter;
 
     //total interest
     private JPanel totInterestPanel;
@@ -89,9 +106,7 @@ public class CalculatorGUI {
     private JFormattedTextField totInterestField;
     private JFormattedTextField totInterestPercentField;
     private NumberFormat totInterestFormat;
-//    private NumberFormatter totInterestFormatter;
     private NumberFormat totInterestPercentFormat;
-//    private NumberFormatter totInterestPercentFormatter;
 
     //total capital part
     private JPanel totCapPartPanel;
@@ -101,9 +116,7 @@ public class CalculatorGUI {
     private JFormattedTextField totCapPartField;
     private JFormattedTextField totCapPartPercentField;
     private NumberFormat totCapPartFormat;
-//    private NumberFormatter totCapPartFormatter;
     private NumberFormat totCapPartPercentFormat;
-//    private NumberFormatter totCapPartPercentFormatter;
 
 
     public static void main(String[] args) {
@@ -128,6 +141,7 @@ public class CalculatorGUI {
 
         //interest rate:
         interestRateFormat = NumberFormat.getPercentInstance();
+        interestRateFormat.setMinimumFractionDigits(2);
         interestRateFormatter = new NumberFormatter(interestRateFormat);
         interestRateFormatter.setValueClass(Double.class);
         interestRateFormatter.setMinimum(0.0);
@@ -157,7 +171,7 @@ public class CalculatorGUI {
 
     private void intitializeGUI() {
         //frame settings:
-        mainFrame = new JFrame("Installment Calculator");
+        mainFrame = new JFrame(mainFrameTitleString);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setSize(700, 400);
         mainPanel = new JPanel();
@@ -171,19 +185,16 @@ public class CalculatorGUI {
         mainPanel.add(resultsPanel);
 
         //look and feel
-        try {
+        /*try {
             UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
             e.printStackTrace();
-        } catch (InstantiationException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        } catch (UnsupportedLookAndFeelException e) {
-            e.printStackTrace();
-        }
+        }*/
 
-        /* ***    INPUT   *** */
+
+        /* *******************
+         ***     INPUT     ***
+         *********************/
         //debt value:
         debtValPanel = new JPanel(new GridLayout(1, 2)); //1 row, 2 columns
         debtLabel = new JLabel(debtString);
@@ -215,6 +226,17 @@ public class CalculatorGUI {
         noPeriodsField.setToolTipText(noPeriodsTooltipString);
         noPeriodsSubpanel.add(noPeriodsField);
         noPeriodsComboBox = new JComboBox<>(CalcPeriodInputType.values());
+        noPeriodsComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                if (noPeriodsComboBox.getSelectedItem() == CalcPeriodInputType.MONTH) {
+                    repFreqComboBox.setSelectedItem(CalcRepaymentFrequency.MONTHLY);
+                    repFreqComboBox.setEnabled(false);
+                } else {
+                    repFreqComboBox.setEnabled(true);
+                }
+            }
+        });
         noPeriodsSubpanel.add(noPeriodsComboBox);
         inputPanel.add(noPeriodsPanel);
 
@@ -241,6 +263,7 @@ public class CalculatorGUI {
         buttonsPanel = new JPanel(new GridLayout(1, 2));
         calculateButton = new JButton(calculateButtonString);
         detailsButton = new JButton(detailsButtonString);
+        detailsButton.setEnabled(false);
         buttonsPanel.add(calculateButton);
         buttonsPanel.add(detailsButton);
         inputPanel.add(buttonsPanel);
@@ -253,7 +276,9 @@ public class CalculatorGUI {
         resultsPanel.add(new JLabel(resultsString));
 
 
-        /* ***    RESULTS   *** */
+        /* *********************
+         ***     RESULTS     ***
+         ***********************/
         //total repayment
         totRepPanel = new JPanel(new GridLayout(1, 2));
         totRepLabel = new JLabel(totRepString);
@@ -261,7 +286,6 @@ public class CalculatorGUI {
         totRepPanel.add(totRepLabel);
         totRepPanel.add(totRepField);
         resultsPanel.add(totRepPanel);
-        totRepField.setValue(150000); //test only!
         totRepField.setEditable(false);
 
         //total interest
@@ -275,8 +299,6 @@ public class CalculatorGUI {
         totInterestSubpanel.add(totInterestPercentField);
         totInterestPanel.add(totInterestSubpanel);
         resultsPanel.add(totInterestPanel);
-        totInterestField.setValue(50000); //test only!
-        totInterestPercentField.setValue(0.33); //test only!
         totInterestField.setEditable(false);
         totInterestPercentField.setEditable(false);
 
@@ -291,12 +313,180 @@ public class CalculatorGUI {
         totCapPartSubpanel.add(totCapPartPercentField);
         totCapPartPanel.add(totCapPartSubpanel);
         resultsPanel.add(totCapPartPanel);
-        totCapPartField.setValue(100000);
-        totCapPartPercentField.setValue(0.67);
         totCapPartField.setEditable(false);
         totCapPartPercentField.setEditable(false);
+
+        //action listeners
+        calculateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                //get params
+                double debt = (Double) debtField.getValue();
+                double rate = (Double) interestRateField.getValue();
+                int noPeriods = (Integer) noPeriodsField.getValue();
+                CalcRepaymentType repType = (CalcRepaymentType) repTypeComboBox.getSelectedItem();
+                CalcPeriodInputType inputType = (CalcPeriodInputType) noPeriodsComboBox.getSelectedItem();
+                CalcRepaymentFrequency repFreq = (CalcRepaymentFrequency) repFreqComboBox.getSelectedItem();
+                //calculate
+                //public static CalcResult calculate(double debt, double rate, int noPeriods, CalcRepaymentType repaymentType,
+                //  CalcPeriodInputType periodInput, CalcRepaymentFrequency accrualRate)
+                calcResult = CalcDispatcher.calculate(debt, rate, noPeriods, repType, inputType, repFreq);
+                //set results values
+                totRepField.setValue(calcResult.getInstallmentSum());
+                totInterestField.setValue(calcResult.getInterestSum());
+                totCapPartField.setValue(calcResult.getInstallmentSum() - calcResult.getInterestSum());
+                totInterestPercentField.setValue(calcResult.getInterestSum() / calcResult.getInstallmentSum());
+                totCapPartPercentField.setValue(1.0d - calcResult.getInterestSum() / calcResult.getInstallmentSum());
+                detailsButton.setEnabled(true); //enable details button
+            }
+        });
+
+        detailsButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent actionEvent) {
+                detailsDialog = new DetailsDialog(null, calcResult);
+                SwingUtilities.invokeLater(new Runnable() {
+                    @Override
+                    public void run() {
+                        detailsDialog.setVisible(true);
+                    }
+                });
+            }
+        });
 
         //display frame:
         mainFrame.setVisible(true);
     }
 }
+
+
+
+
+
+class DetailsDialog extends JDialog {
+
+    private static String titleString = "Repayment details"; //dialog window title
+
+    private static String periodColumnString = "Period";
+    private static String debtOutstandingColumnString = "Debt Outstanding";
+    private static String interestColumnString = "Interest paid";
+    private static String capitalPartColumnString = "Capital part paid";
+    private static String installmentColumnString = "Installment paid";
+
+//    private static Object[] columns = { periodColumnString, debtOutstandingColumnString, interestColumnString,
+//                                        capitalPartColumnString, installmentColumnString };
+
+    private static String[] columns = { periodColumnString, debtOutstandingColumnString, interestColumnString,
+            capitalPartColumnString, installmentColumnString };
+
+    private CalcResult result;
+    private Object[][] data;
+
+    private JScrollPane tableScrollPane;
+    private JTable detailsTable;
+
+    private JButton closeButton;
+    private static String closeButtonString = "Close";
+
+    public DetailsDialog(JFrame parent, CalcResult result) {
+        super(parent, titleString, true);
+        setSize(600,800);
+
+        //table data
+        this.result = result;
+        setUpTableData();
+
+        //table
+//        detailsTable = new JTable(data, columns); //wersja z Default table model - columns musi byc typu Object[]
+        detailsTable = new JTable(new DetailsTableModel(columns, data));
+        tableScrollPane = new JScrollPane(detailsTable);
+        TableColumnModel columnModel = detailsTable.getColumnModel();
+        columnModel.getColumn(0).setCellRenderer(new IndexRenderer());
+        columnModel.getColumn(1).setCellRenderer(new CurrencyRenderer());
+        columnModel.getColumn(2).setCellRenderer(new CurrencyRenderer());
+        columnModel.getColumn(3).setCellRenderer(new CurrencyRenderer());
+        columnModel.getColumn(4).setCellRenderer(new CurrencyRenderer());
+
+        //button
+        closeButton = new JButton(closeButtonString);
+        closeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dispose(); // Closes the dialog
+            }
+        });
+
+        //adding elements
+        add(tableScrollPane, BorderLayout.CENTER);
+        add(closeButton, BorderLayout.SOUTH);
+
+    }
+
+    private void setUpTableData() {
+        List<CalcTableItem> resultsList = result.getCalcTable();
+        int noRows = resultsList.size();
+        data = new Object[noRows][5];
+        for (int i = 0; i<noRows; i++) {
+            CalcTableItem item = resultsList.get(i);
+            data[i][0] = item.getPeriod();
+            data[i][1] = item.getDebt();
+            data[i][2] = item.getInterest();
+            data[i][3] = item.getCapitalPart();
+            data[i][4] = item.getInstallment();
+        }
+    }
+
+
+    private class DetailsTableModel extends AbstractTableModel {
+
+        String[] columnNames;
+        Object[][] data;
+
+        public DetailsTableModel(String[] columnNames, Object[][] data){
+            this.columnNames = columnNames;
+            this.data = data;
+        }
+
+        public int getColumnCount() {
+            return columnNames.length;
+        }
+
+        public int getRowCount() {
+            return data.length;
+        }
+
+        public String getColumnName(int col) {
+            return columnNames[col];
+        }
+
+        public Object getValueAt(int row, int col) {
+            return data[row][col];
+        }
+
+        //JTable uses this method to determine the default renderer/editor for each cell.
+        public Class getColumnClass(int c) {
+            return getValueAt(0, c).getClass();
+        }
+
+        //set cells to not-editable
+        public boolean isCellEditable(int row, int col) {
+            return false;
+        }
+
+    }
+
+}
+
+
+
+
+//For testing:
+//                JOptionPane.showMessageDialog(null, "The values are:\n" +
+//                            "debt = " + debt + "\n" +
+//                            "rate = " + rate + "\n" +
+//                            "noPeriods = " + noPeriods + "\n" +
+//                            "repType = " + repType + "\n" +
+//                            "inputType = " + inputType + "\n" +
+//                            "repFreq = " + repFreq + "\n",
+//                        "Test", JOptionPane.INFORMATION_MESSAGE);
+
+
