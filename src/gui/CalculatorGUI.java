@@ -29,7 +29,6 @@ public class CalculatorGUI {
     private JPanel mainPanel;
     private JPanel inputPanel;
     private JPanel resultsPanel;
-    private static String resultsString = "Results:";
     private DetailsDialog detailsDialog;
 
 
@@ -41,7 +40,7 @@ public class CalculatorGUI {
     private JFormattedTextField debtField;
     private JLabel debtLabel;
     private static String debtString = "Debt value: ";
-    private static String debtTooltipString = "Debt value we would like to repay";
+    private static String debtTooltipString = "Debt value we would like to calculate installments for";
     private NumberFormat debtFormat;
     private NumberFormatter debtFormatter;
 
@@ -90,6 +89,11 @@ public class CalculatorGUI {
      ***********************/
     //CalcResult object:
     CalcResult calcResult;
+
+    //Results Label
+    private static String resultsString = "R E S U L T S:";
+    private JLabel resultsLabel;
+    private JPanel resultsLabelPanel;
 
     //total repayment
     private JPanel totRepPanel;
@@ -176,7 +180,14 @@ public class CalculatorGUI {
         mainFrame.setSize(700, 400);
         mainPanel = new JPanel();
         mainPanel.setLayout(new GridLayout(2, 1));
-        mainFrame.add(mainPanel);
+        mainFrame.add(mainPanel, BorderLayout.CENTER);
+
+        //Experimental - add 'dummy' panels on each side of the main frame in order to have margins
+        mainFrame.add(new JPanel(), BorderLayout.NORTH);
+        mainFrame.add(new JPanel(), BorderLayout.SOUTH);
+        mainFrame.add(new JPanel(), BorderLayout.WEST);
+        mainFrame.add(new JPanel(), BorderLayout.EAST);
+
         inputPanel = new JPanel();
         inputPanel.setLayout(new GridLayout(7, 1));
         resultsPanel = new JPanel();
@@ -268,17 +279,24 @@ public class CalculatorGUI {
         buttonsPanel.add(detailsButton);
         inputPanel.add(buttonsPanel);
 
-        //results panel - dummy panels
-        resultsPanel.add(new JPanel());
-        resultsPanel.add(new JPanel());
-
-        //results label:
-        resultsPanel.add(new JLabel(resultsString));
 
 
         /* *********************
          ***     RESULTS     ***
          ***********************/
+        //results panel - dummy panels
+        resultsPanel.add(new JPanel());
+        resultsPanel.add(new JPanel());
+
+        //results label:
+        resultsLabel = new JLabel(resultsString, SwingConstants.CENTER);
+        resultsLabel.setFont(new Font(null, Font.BOLD, 14));
+        resultsLabelPanel = new JPanel();
+        resultsLabelPanel.setLayout(new BorderLayout());
+        resultsLabelPanel.add(resultsLabel, BorderLayout.CENTER);
+        resultsLabelPanel.add(new JPanel(), BorderLayout.SOUTH);
+        resultsPanel.add(resultsLabelPanel);
+
         //total repayment
         totRepPanel = new JPanel(new GridLayout(1, 2));
         totRepLabel = new JLabel(totRepString);
@@ -373,9 +391,6 @@ class DetailsDialog extends JDialog {
     private static String capitalPartColumnString = "Capital part paid";
     private static String installmentColumnString = "Installment paid";
 
-//    private static Object[] columns = { periodColumnString, debtOutstandingColumnString, interestColumnString,
-//                                        capitalPartColumnString, installmentColumnString };
-
     private static String[] columns = { periodColumnString, debtOutstandingColumnString, interestColumnString,
             capitalPartColumnString, installmentColumnString };
 
@@ -385,19 +400,48 @@ class DetailsDialog extends JDialog {
     private JScrollPane tableScrollPane;
     private JTable detailsTable;
 
+    private JPanel closeButtonPanel;
     private JButton closeButton;
     private static String closeButtonString = "Close";
 
+    private JPanel summaryPanel;
+    private static String summaryPanelString = "Installment Details:";
+    private JLabel summaryPanelLabel;
+
     public DetailsDialog(JFrame parent, CalcResult result) {
+        //basic elements of dialog window
         super(parent, titleString, true);
         setSize(600,800);
-
-        //table data
         this.result = result;
-        setUpTableData();
+        //method to prepare data:
+        prepareDialog();
+    }
 
-        //table
-//        detailsTable = new JTable(data, columns); //wersja z Default table model - columns musi byc typu Object[]
+    private void prepareDialog() {
+        //set up summary panel
+        createSummaryPanel();
+        //set up table data
+        setUpTableData();
+        //create table
+        createTable();
+        //create close button
+        createCloseButton();
+        //adding elements
+        addElements();
+    }
+
+    private void createSummaryPanel() {
+        summaryPanel = new JPanel();
+        summaryPanel.setLayout(new BorderLayout());
+        summaryPanelLabel = new JLabel(summaryPanelString, SwingConstants.CENTER);
+        summaryPanelLabel.setFont(new Font(null, Font.BOLD, 14));
+        summaryPanel.add(new JPanel(), BorderLayout.NORTH);
+        summaryPanel.add(new JPanel(), BorderLayout.SOUTH);
+        summaryPanel.add(summaryPanelLabel, BorderLayout.CENTER);
+    }
+
+    private void createTable() {
+        //        detailsTable = new JTable(data, columns); //wersja z Default table model - columns musi byc typu Object[]
         detailsTable = new JTable(new DetailsTableModel(columns, data));
         tableScrollPane = new JScrollPane(detailsTable);
         TableColumnModel columnModel = detailsTable.getColumnModel();
@@ -406,19 +450,6 @@ class DetailsDialog extends JDialog {
         columnModel.getColumn(2).setCellRenderer(new CurrencyRenderer());
         columnModel.getColumn(3).setCellRenderer(new CurrencyRenderer());
         columnModel.getColumn(4).setCellRenderer(new CurrencyRenderer());
-
-        //button
-        closeButton = new JButton(closeButtonString);
-        closeButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                dispose(); // Closes the dialog
-            }
-        });
-
-        //adding elements
-        add(tableScrollPane, BorderLayout.CENTER);
-        add(closeButton, BorderLayout.SOUTH);
-
     }
 
     private void setUpTableData() {
@@ -433,6 +464,35 @@ class DetailsDialog extends JDialog {
             data[i][3] = item.getCapitalPart();
             data[i][4] = item.getInstallment();
         }
+    }
+
+    private void createCloseButton() {
+        closeButtonPanel = new JPanel();
+        closeButtonPanel.setLayout(new BorderLayout());
+        closeButton = new JButton(closeButtonString);
+        closeButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                dispose(); // Closes the dialog
+            }
+        });
+        closeButtonPanel.add(new JPanel(), BorderLayout.SOUTH);
+        closeButtonPanel.add(new JPanel(), BorderLayout.NORTH);
+        closeButtonPanel.add(new JPanel(), BorderLayout.WEST);
+        closeButtonPanel.add(new JPanel(), BorderLayout.EAST);
+        JPanel innerJPanel = new JPanel();
+        innerJPanel.setLayout(new GridLayout(1, 3));
+        innerJPanel.add(new JPanel());
+        innerJPanel.add(closeButton);
+        innerJPanel.add(new JPanel());
+        closeButtonPanel.add(innerJPanel, BorderLayout.CENTER);
+    }
+
+    private void addElements() {
+        add(tableScrollPane, BorderLayout.CENTER);
+        add(closeButtonPanel, BorderLayout.SOUTH);
+        add(summaryPanel, BorderLayout.NORTH);
+        add(new JPanel(), BorderLayout.WEST);
+        add(new JPanel(), BorderLayout.EAST);
     }
 
 
@@ -475,7 +535,6 @@ class DetailsDialog extends JDialog {
     }
 
 }
-
 
 
 
