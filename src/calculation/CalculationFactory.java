@@ -3,6 +3,7 @@ package calculation;
 /**
  * Created by Kuba on 2016-01-03.
  */
+/* Factory Class that takes user input parses it and creates an appropriate Calculation object */
 public class CalculationFactory {
 
     private static double debt;
@@ -26,8 +27,9 @@ public class CalculationFactory {
     }
 
     private static Calculation getCalculation(CalcRepaymentType repaymentType) {
-        Calculation calc = null;
+        Calculation calc = null; //has to be initialized as null to avoid compiler error (var might not have been initialized)
 
+        //choose appropriate Calculation object
         switch (repaymentType) {
             case CONSTANT_CAPITAL_PART:
                 calc = new ConstCapitalPartCalc(CalculationFactory.debt, CalculationFactory.rate, CalculationFactory.noPeriods);
@@ -46,6 +48,7 @@ public class CalculationFactory {
         return calc;
     }
 
+    //scale interest rate
     private static void recalculateRate(CalcPeriodInputType periodInput, CalcRepaymentFrequency accrualRate) {
         if (periodInput == CalcPeriodInputType.YEAR && accrualRate == CalcRepaymentFrequency.MONTHLY) {
             CalculationFactory.rate /= 12;
@@ -54,10 +57,12 @@ public class CalculationFactory {
             CalculationFactory.rate /= 12;
         }
         else if (periodInput == CalcPeriodInputType.MONTH && accrualRate == CalcRepaymentFrequency.YEARLY) {
+            //this is not allowed and this case is avoided in the GUI section
             throw new RuntimeException("Input in months and yearly interest accrual not allowed.");
         }
     }
 
+    //scale #periods
     private static void recalculateNoPeriods(CalcPeriodInputType periodInput, CalcRepaymentFrequency accrualRate) {
         if (periodInput == CalcPeriodInputType.YEAR && accrualRate == CalcRepaymentFrequency.MONTHLY) {
             CalculationFactory.noPeriods *= 12;

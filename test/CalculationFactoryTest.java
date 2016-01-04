@@ -23,7 +23,6 @@ public class CalculationFactoryTest {
     @Test
     public void testCalculateConstInstallment1() throws Exception {
         //public static CalcResult calculate(double debt, double rate, int noPeriods, CalcRepaymentType repaymentType, CalcPeriodInputType periodInput, CalcRepaymentFrequency accrualRate)
-//        CalcResult cr = CalcDispatcher.calculate(1000.0d, 0.1d, 4, CalcRepaymentType.CONSTANT_INSTALLMENT, CalcPeriodInputType.YEAR, CalcRepaymentFrequency.YEARLY);
         CalcResult cr = CalculationFactory.createCalculation(1000.0d, 0.1d, 4, CalcRepaymentType.CONSTANT_INSTALLMENT, CalcPeriodInputType.YEAR, CalcRepaymentFrequency.YEARLY).calculate();
         assertEquals(261.883730d, cr.getInterestSum(), 0.001d);
         assertEquals(1261.883730d, cr.getInstallmentSum(), 0.001d);
@@ -48,7 +47,6 @@ public class CalculationFactoryTest {
     @Test
     public void testCalculateConstInstallment2() throws Exception {
         //public static CalcResult calculate(double debt, double rate, int noPeriods, CalcRepaymentType repaymentType, CalcPeriodInputType periodInput, CalcRepaymentFrequency accrualRate)
-//        CalcResult cr = CalcDispatcher.calculate(1000.0d, 0.1d, 1, CalcRepaymentType.CONSTANT_INSTALLMENT, CalcPeriodInputType.YEAR, CalcRepaymentFrequency.MONTHLY);
         CalcResult cr = CalculationFactory.createCalculation(1000.0d, 0.1d, 1, CalcRepaymentType.CONSTANT_INSTALLMENT, CalcPeriodInputType.YEAR, CalcRepaymentFrequency.MONTHLY).calculate();
 
         assertEquals(54.990647d, cr.getInterestSum(), 0.001d);
@@ -77,7 +75,6 @@ public class CalculationFactoryTest {
     @Test
     public void testCalculateConstInstallment3() throws Exception {
         //public static CalcResult calculate(double debt, double rate, int noPeriods, CalcRepaymentType repaymentType, CalcPeriodInputType periodInput, CalcRepaymentFrequency accrualRate)
-//        CalcResult cr = CalcDispatcher.calculate(1000.0d, 0.1d, 6, CalcRepaymentType.CONSTANT_INSTALLMENT, CalcPeriodInputType.MONTH, CalcRepaymentFrequency.MONTHLY);
         CalcResult cr = CalculationFactory.createCalculation(1000.0d, 0.1d, 6, CalcRepaymentType.CONSTANT_INSTALLMENT, CalcPeriodInputType.MONTH, CalcRepaymentFrequency.MONTHLY).calculate();
 
         assertEquals(29.368365d, cr.getInterestSum(), 0.001d);
@@ -110,7 +107,6 @@ public class CalculationFactoryTest {
     //Input: year, repayment freq: yearly
     @Test
     public void testCalculateConstCapitalPart1() throws Exception {
-//        CalcResult cr = CalcDispatcher.calculate(1000.0d, 0.1d, 4, CalcRepaymentType.CONSTANT_CAPITAL_PART, CalcPeriodInputType.YEAR, CalcRepaymentFrequency.YEARLY);
         CalcResult cr = CalculationFactory.createCalculation(1000.0d, 0.1d, 4, CalcRepaymentType.CONSTANT_CAPITAL_PART, CalcPeriodInputType.YEAR, CalcRepaymentFrequency.YEARLY).calculate();
 
         assertEquals(cr.getInterestSum(), 250.0d, 0.000001d);
@@ -135,7 +131,6 @@ public class CalculationFactoryTest {
     //Input: year, repayment freq: monthly
     @Test
     public void testCalculateConstCapitalPart2() throws Exception {
-//        CalcResult cr = CalcDispatcher.calculate(1000.0d, 0.1d, 1, CalcRepaymentType.CONSTANT_CAPITAL_PART, CalcPeriodInputType.YEAR, CalcRepaymentFrequency.MONTHLY);
         CalcResult cr = CalculationFactory.createCalculation(1000.0d, 0.1d, 1, CalcRepaymentType.CONSTANT_CAPITAL_PART, CalcPeriodInputType.YEAR, CalcRepaymentFrequency.MONTHLY).calculate();
 
         assertEquals(cr.getInterestSum(), 54.166667d, 0.000001d);
@@ -162,7 +157,6 @@ public class CalculationFactoryTest {
     //Input: month, repayment freq: monthly
     @Test
     public void testCalculateConstCapitalPart3() throws Exception {
-//        CalcResult cr = CalcDispatcher.calculate(1000.0d, 0.1d, 6, CalcRepaymentType.CONSTANT_CAPITAL_PART, CalcPeriodInputType.MONTH, CalcRepaymentFrequency.MONTHLY);
         CalcResult cr = CalculationFactory.createCalculation(1000.0d, 0.1d, 6, CalcRepaymentType.CONSTANT_CAPITAL_PART, CalcPeriodInputType.MONTH, CalcRepaymentFrequency.MONTHLY).calculate();
 
         assertEquals(cr.getInterestSum(), 29.166667d, 0.000001d);
@@ -195,7 +189,6 @@ public class CalculationFactoryTest {
     //Input: year, repayment freq: yearly
     @Test
     public void testCalculateCapitalAndInterestAtEnd1() throws Exception {
-//        CalcResult cr = CalcDispatcher.calculate(1000.0d, 0.1d, 4, CalcRepaymentType.CAPITAL_AND_INTEREST_AT_END, CalcPeriodInputType.YEAR, CalcRepaymentFrequency.YEARLY);
         CalcResult cr = CalculationFactory.createCalculation(1000.0d, 0.1d, 4, CalcRepaymentType.CAPITAL_AND_INTEREST_AT_END, CalcPeriodInputType.YEAR, CalcRepaymentFrequency.YEARLY).calculate();
 
         assertEquals(cr.getInterestSum(), 464.1d, 0.000001d);
@@ -221,7 +214,6 @@ public class CalculationFactoryTest {
     //Input: year, repayment freq: monthly
     @Test
     public void testCalculateCapitalAndInterestAtEnd2() throws Exception {
-//        CalcResult cr = CalcDispatcher.calculate(1000.0d, 0.1d, 1, CalcRepaymentType.CAPITAL_AND_INTEREST_AT_END, CalcPeriodInputType.YEAR, CalcRepaymentFrequency.MONTHLY);
         CalcResult cr = CalculationFactory.createCalculation(1000.0d, 0.1d, 1, CalcRepaymentType.CAPITAL_AND_INTEREST_AT_END, CalcPeriodInputType.YEAR, CalcRepaymentFrequency.MONTHLY).calculate();
 
         assertEquals(cr.getInterestSum(), 104.713067d, 0.000001d);
@@ -249,7 +241,6 @@ public class CalculationFactoryTest {
     //Input: month, repayment freq: monthly
     @Test
     public void testCalculateCapitalAndInterestAtEnd3() throws Exception {
-//        CalcResult cr = CalcDispatcher.calculate(1000.0d, 0.1d, 6, CalcRepaymentType.CAPITAL_AND_INTEREST_AT_END, CalcPeriodInputType.MONTH, CalcRepaymentFrequency.MONTHLY);
         CalcResult cr = CalculationFactory.createCalculation(1000.0d, 0.1d, 6, CalcRepaymentType.CAPITAL_AND_INTEREST_AT_END, CalcPeriodInputType.MONTH, CalcRepaymentFrequency.MONTHLY).calculate();
 
         assertEquals(cr.getInterestSum(), 51.053313d, 0.000001d);
@@ -284,7 +275,6 @@ public class CalculationFactoryTest {
     //Input: year, repayment freq: yearly
     @Test
     public void testCalculateCapitalAtEndInterestPerPeriod1() throws Exception {
-//        CalcResult cr = CalcDispatcher.calculate(1000.0d, 0.1d, 4, CalcRepaymentType.CAPITAL_AT_END_INTEREST_PER_PERIOD, CalcPeriodInputType.YEAR, CalcRepaymentFrequency.YEARLY);
         CalcResult cr = CalculationFactory.createCalculation(1000.0d, 0.1d, 4, CalcRepaymentType.CAPITAL_AT_END_INTEREST_PER_PERIOD, CalcPeriodInputType.YEAR, CalcRepaymentFrequency.YEARLY).calculate();
 
         assertEquals(400.0d, cr.getInterestSum(), 0.000001d);
@@ -309,7 +299,6 @@ public class CalculationFactoryTest {
     //Input: year, repayment freq: monthly
     @Test
     public void testCalculateCapitalAtEndInterestPerPeriod2() throws Exception {
-//        CalcResult cr = CalcDispatcher.calculate(1000.0d, 0.1d, 1, CalcRepaymentType.CAPITAL_AT_END_INTEREST_PER_PERIOD, CalcPeriodInputType.YEAR, CalcRepaymentFrequency.MONTHLY);
         CalcResult cr = CalculationFactory.createCalculation(1000.0d, 0.1d, 1, CalcRepaymentType.CAPITAL_AT_END_INTEREST_PER_PERIOD, CalcPeriodInputType.YEAR, CalcRepaymentFrequency.MONTHLY).calculate();
 
         assertEquals(100.0d, cr.getInterestSum(), 0.000001d);
@@ -336,7 +325,6 @@ public class CalculationFactoryTest {
     //Input: month, repayment freq: monthly
     @Test
     public void testCalculateCapitalAtEndInterestPerPeriod3() throws Exception {
-//        CalcResult cr = CalcDispatcher.calculate(1000.0d, 0.1d, 6, CalcRepaymentType.CAPITAL_AT_END_INTEREST_PER_PERIOD, CalcPeriodInputType.MONTH, CalcRepaymentFrequency.MONTHLY);
         CalcResult cr = CalculationFactory.createCalculation(1000.0d, 0.1d, 6, CalcRepaymentType.CAPITAL_AT_END_INTEREST_PER_PERIOD, CalcPeriodInputType.MONTH, CalcRepaymentFrequency.MONTHLY).calculate();
 
         assertEquals(50.0d, cr.getInterestSum(), 0.000001d);

@@ -346,10 +346,7 @@ public class CalculatorGUI {
                 CalcPeriodInputType inputType = (CalcPeriodInputType) noPeriodsComboBox.getSelectedItem();
                 CalcRepaymentFrequency repFreq = (CalcRepaymentFrequency) repFreqComboBox.getSelectedItem();
                 //calculate
-                //public static CalcResult calculate(double debt, double rate, int noPeriods, CalcRepaymentType repaymentType,
-                //  CalcPeriodInputType periodInput, CalcRepaymentFrequency accrualRate)
-//                calcResult = CalcDispatcher.calculate(debt, rate, noPeriods, repType, inputType, repFreq);
-                calcResult = CalculationFactory.createCalculation(debt, rate, noPeriods, repType, inputType, repFreq).calculate();
+               calcResult = CalculationFactory.createCalculation(debt, rate, noPeriods, repType, inputType, repFreq).calculate();
                 //set results values
                 totRepField.setValue(calcResult.getInstallmentSum());
                 totInterestField.setValue(calcResult.getInterestSum());
