@@ -19,6 +19,8 @@ public class ConstInstallmentCalcTest {
         assertEquals(4, cic.getNoPeriods());
     }
 
+    //values for these tests can be found in the accompanying excel spreadsheet "loan_repayment_examples",
+    //sheet: 4.ConstantInstallment
     @Test
     public void testCalculate() throws Exception {
         ConstInstallmentCalc cic = new ConstInstallmentCalc(1000.0d, 0.1d, 4);

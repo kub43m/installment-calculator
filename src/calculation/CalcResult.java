@@ -6,9 +6,12 @@ package calculation;
 
 import java.util.*;
 
+//Class that holds results of installments computation produced by object implementing Calculation interface
 public class CalcResult {
+    //variables holding total (aggregated)results
     private double installmentSum = 0.0d;
     private double interestSum = 0.0d;
+    //list holding elements (capital part, interest, total installment) for individual periods (in a table-like manner)
     private List<CalcTableItem> calcTable = new ArrayList<>();
 
     //Getters:

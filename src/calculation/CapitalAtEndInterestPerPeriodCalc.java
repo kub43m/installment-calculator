@@ -1,13 +1,11 @@
 package calculation;
 
 /**
- * Created by Kuba on 12/22/2015.
+ * Created by Kuba on 2015-12-30.
  */
-/* An implementation of Calculation interface modelling the situation where every period the same amount of capital is
- * paid (capital part of the installment is constant) and interest is paid every period based on the amount of debt
- * outstanding -> installments are decreasing every period */
-public class ConstCapitalPartCalc implements Calculation {
-
+/* An implementation of Calculation interface modelling the situation where the capital part is paid at loan's maturity
+ * and interest payments are made every period. */
+public class CapitalAtEndInterestPerPeriodCalc implements Calculation {
     private double debt;
     private double rate;
     private int noPeriods;
@@ -15,7 +13,7 @@ public class ConstCapitalPartCalc implements Calculation {
     private double totalInterest = 0;
     private CalcResult calcResult = new CalcResult();
 
-    public ConstCapitalPartCalc(double debt, double rate, int noPeriods) {
+    public CapitalAtEndInterestPerPeriodCalc(double debt, double rate, int noPeriods) {
         this.debt = debt;
         this.rate = rate;
         this.noPeriods = noPeriods;
@@ -36,27 +34,30 @@ public class ConstCapitalPartCalc implements Calculation {
     @Override
     public CalcResult calculate() {
 
-        //set up
         double debtOutstanding = debt;
-        double capitalPart = debt / noPeriods; //constant capital part for every period
+        double capitalPart;
         double interest;
-        double installment;
+        double installment = 0;
 
         //Calculate financial values for every period, period by period
         for (int i=1; i<=noPeriods; i++) {
             interest = debtOutstanding * rate;
-            installment = interest + capitalPart;
+            if (i != noPeriods){ //not in the last period of the loan
+                capitalPart = 0;
+            } else { //the last period of the loan
+                capitalPart = debtOutstanding;
+            }
             //Add the period's financial values to the table (add a single row to the table)
-            //Args: int period, double debt, double interest, double capitalPart
+            //Args: int period, double debt, double interest, double capitalPart, double interest
             calcResult.addRow(new CalcTableItem(i, debtOutstanding, interest, capitalPart));
-            debtOutstanding -= capitalPart; //capital payment decreases outstanding debt
-            totalInstallment += installment;
+            //update totals
+            installment = capitalPart + interest;
             totalInterest += interest;
+            totalInstallment += installment;
         }
         //set totals' final values
         calcResult.setInstallmentSum(totalInstallment);
         calcResult.setInterestSum(totalInterest);
         return calcResult;
     }
-
 }

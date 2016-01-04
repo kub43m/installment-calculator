@@ -9,6 +9,8 @@ import static org.junit.Assert.*;
  */
 public class ConstCapitalPartCalcTest {
 
+    //values for this test can be found in the accompanying excel spreadsheet "loan_repayment_examples",
+    //sheet: 3.ConstantCapitalPart
     @Test
     public void testCalculate() throws Exception {
         ConstCapitalPartCalc ccpc = new ConstCapitalPartCalc(1000.0d, 0.1d, 4);
@@ -29,9 +31,6 @@ public class ConstCapitalPartCalcTest {
             assertEquals(interest[i-1] + capitalPart, cti.getInstallment(), 0.000001d);
             i++;
         }
-
-
-
     }
 
     @Test
