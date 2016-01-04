@@ -3,15 +3,12 @@ package gui;
 import calculation.*;
 
 import javax.swing.*;
-import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.TableColumnModel;
+import javax.swing.table.*;
 import javax.swing.text.NumberFormatter;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.text.NumberFormat;
 import java.util.List;
-import javax.swing.table.AbstractTableModel;
 
 /**
  * Created by Kuba on 12/27/2015.
@@ -237,6 +234,7 @@ public class CalculatorGUI {
         noPeriodsField.setToolTipText(noPeriodsTooltipString);
         noPeriodsSubpanel.add(noPeriodsField);
         noPeriodsComboBox = new JComboBox<>(CalcPeriodInputType.values());
+        //action listener to disable yearly repayment frequency when input in months is given
         noPeriodsComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -256,6 +254,14 @@ public class CalculatorGUI {
         repFreqLabel = new JLabel(repFreqString);
         repFreqPanel.add(repFreqLabel);
         repFreqComboBox = new JComboBox<>(CalcRepaymentFrequency.values());
+        repFreqComboBox.setToolTipText( ((CalcRepaymentFrequency) repFreqComboBox.getSelectedItem()).getTooltip() ); //set initial tooltip
+        //item listener for setting context-based tooltips:
+        repFreqComboBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent itemEvent) {
+                repFreqComboBox.setToolTipText( ((CalcRepaymentFrequency) repFreqComboBox.getSelectedItem()).getTooltip() );
+            }
+        });
         repFreqPanel.add(repFreqComboBox);
         inputPanel.add(repFreqPanel);
 
@@ -264,17 +270,25 @@ public class CalculatorGUI {
         repTypeLabel = new JLabel(repTypeString);
         repTypePanel.add(repTypeLabel);
         repTypeComboBox = new JComboBox<>(CalcRepaymentType.values());
+        repTypeComboBox.setToolTipText( ((CalcRepaymentType) repTypeComboBox.getSelectedItem()).getTooltip() ); //set initial tooltip
+        //item listener for setting context-based tooltips:
+        repTypeComboBox.addItemListener(new ItemListener() {
+            @Override
+            public void itemStateChanged(ItemEvent itemEvent) {
+                repTypeComboBox.setToolTipText( ((CalcRepaymentType) repTypeComboBox.getSelectedItem()).getTooltip() );
+            }
+        });
         repTypePanel.add(repTypeComboBox);
         inputPanel.add(repTypePanel);
 
-        //dummy panel
+        //dummy panel - to create space between input fields and buttons
         inputPanel.add(new JPanel());
 
         //buttons:
         buttonsPanel = new JPanel(new GridLayout(1, 2));
         calculateButton = new JButton(calculateButtonString);
         detailsButton = new JButton(detailsButtonString);
-        detailsButton.setEnabled(false);
+        detailsButton.setEnabled(false); //details can be shown only after calculation has been performed
         buttonsPanel.add(calculateButton);
         buttonsPanel.add(detailsButton);
         inputPanel.add(buttonsPanel);
@@ -284,7 +298,7 @@ public class CalculatorGUI {
         /* *********************
          ***     RESULTS     ***
          ***********************/
-        //results panel - dummy panels
+        //results panel - dummy panels to create space between input panel + buttons & results panel
         resultsPanel.add(new JPanel());
         resultsPanel.add(new JPanel());
 
@@ -334,7 +348,8 @@ public class CalculatorGUI {
         totCapPartField.setEditable(false);
         totCapPartPercentField.setEditable(false);
 
-        //action listeners
+        //buttons - action listeners
+        //calculate button
         calculateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -346,17 +361,20 @@ public class CalculatorGUI {
                 CalcPeriodInputType inputType = (CalcPeriodInputType) noPeriodsComboBox.getSelectedItem();
                 CalcRepaymentFrequency repFreq = (CalcRepaymentFrequency) repFreqComboBox.getSelectedItem();
                 //calculate
-               calcResult = CalculationFactory.createCalculation(debt, rate, noPeriods, repType, inputType, repFreq).calculate();
+                calcResult = CalculationFactory.createCalculation(debt, rate, noPeriods, repType, inputType, repFreq).calculate();
                 //set results values
                 totRepField.setValue(calcResult.getInstallmentSum());
                 totInterestField.setValue(calcResult.getInterestSum());
                 totCapPartField.setValue(calcResult.getInstallmentSum() - calcResult.getInterestSum());
                 totInterestPercentField.setValue(calcResult.getInterestSum() / calcResult.getInstallmentSum());
                 totCapPartPercentField.setValue(1.0d - calcResult.getInterestSum() / calcResult.getInstallmentSum());
+                totInterestPercentField.setToolTipText("Interest payments make for " + totInterestPercentField.getText() + "of all installment payments");
+                totCapPartPercentField.setToolTipText("Capital payments make for " + totCapPartPercentField.getText() + "of all installment payments");
                 detailsButton.setEnabled(true); //enable details button
             }
         });
 
+        //details button
         detailsButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent actionEvent) {
@@ -376,13 +394,12 @@ public class CalculatorGUI {
 }
 
 
-
-
-
+//Dialog window shown when details button is pressed (only after calculation has been performed)
 class DetailsDialog extends JDialog {
 
     private static String titleString = "Repayment details"; //dialog window title
 
+    //column names
     private static String periodColumnString = "Period";
     private static String debtOutstandingColumnString = "Debt Outstanding";
     private static String interestColumnString = "Interest paid";
@@ -392,8 +409,19 @@ class DetailsDialog extends JDialog {
     private static String[] columns = { periodColumnString, debtOutstandingColumnString, interestColumnString,
             capitalPartColumnString, installmentColumnString };
 
-    private CalcResult result;
-    private Object[][] data;
+    //column headers
+    private static String periodColumnTooltip = "";
+    private static String debtOutstandingColumnTooltip = "Debt outstanding BEFORE payment is made in this period";
+    private static String interestColumnTooltip = "Interest payment based on debt outstanding in this period";
+    private static String capitalPartColumnTooltip = "Capital part paid in this period";
+    private static String installmentColumnTooltip = "Installment paid in this period";
+
+    private static String[] toolTips = {periodColumnTooltip, debtOutstandingColumnTooltip, interestColumnTooltip,
+            capitalPartColumnTooltip, installmentColumnTooltip};
+
+    //results data
+    private CalcResult result; //'raw' result
+    private Object[][] data; //processed to serve as input for table
 
     private JScrollPane tableScrollPane;
     private JTable detailsTable;
@@ -433,6 +461,7 @@ class DetailsDialog extends JDialog {
         summaryPanel.setLayout(new BorderLayout());
         summaryPanelLabel = new JLabel(summaryPanelString, SwingConstants.CENTER);
         summaryPanelLabel.setFont(new Font(null, Font.BOLD, 14));
+        //use 'dummy' panels to create space above and below results label
         summaryPanel.add(new JPanel(), BorderLayout.NORTH);
         summaryPanel.add(new JPanel(), BorderLayout.SOUTH);
         summaryPanel.add(summaryPanelLabel, BorderLayout.CENTER);
@@ -443,11 +472,15 @@ class DetailsDialog extends JDialog {
         detailsTable = new JTable(new DetailsTableModel(columns, data));
         tableScrollPane = new JScrollPane(detailsTable);
         TableColumnModel columnModel = detailsTable.getColumnModel();
+        //set columns' formats:
         columnModel.getColumn(0).setCellRenderer(new IndexRenderer());
         columnModel.getColumn(1).setCellRenderer(new CurrencyRenderer());
         columnModel.getColumn(2).setCellRenderer(new CurrencyRenderer());
         columnModel.getColumn(3).setCellRenderer(new CurrencyRenderer());
         columnModel.getColumn(4).setCellRenderer(new CurrencyRenderer());
+        //column tooltips:
+        ToolTipHeader header = new ToolTipHeader(detailsTable.getColumnModel());
+        detailsTable.setTableHeader(header);
     }
 
     private void setUpTableData() {
@@ -473,11 +506,13 @@ class DetailsDialog extends JDialog {
                 dispose(); // Closes the dialog
             }
         });
+        //'dummy' panels to create space around the button
         closeButtonPanel.add(new JPanel(), BorderLayout.SOUTH);
         closeButtonPanel.add(new JPanel(), BorderLayout.NORTH);
         closeButtonPanel.add(new JPanel(), BorderLayout.WEST);
         closeButtonPanel.add(new JPanel(), BorderLayout.EAST);
         JPanel innerJPanel = new JPanel();
+        //inner panel with its own 'dummy' panels to narrow th button and create space on its sides
         innerJPanel.setLayout(new GridLayout(1, 3));
         innerJPanel.add(new JPanel());
         innerJPanel.add(closeButton);
@@ -493,7 +528,7 @@ class DetailsDialog extends JDialog {
         add(new JPanel(), BorderLayout.EAST);
     }
 
-
+    //custom results table model - mainly to disallow cell editing
     private class DetailsTableModel extends AbstractTableModel {
 
         String[] columnNames;
@@ -529,21 +564,20 @@ class DetailsDialog extends JDialog {
         public boolean isCellEditable(int row, int col) {
             return false;
         }
-
     }
 
+    //custom header - in order to set column names' tooltips
+    private class ToolTipHeader extends JTableHeader {
+
+        public ToolTipHeader(TableColumnModel model) {
+            super(model);
+        }
+
+        public String getToolTipText(MouseEvent e) {
+            int col = columnAtPoint(e.getPoint());
+            int modelCol = getTable().convertColumnIndexToModel(col);
+            return toolTips[modelCol];
+        }
+
+    }
 }
-
-
-
-//For testing:
-//                JOptionPane.showMessageDialog(null, "The values are:\n" +
-//                            "debt = " + debt + "\n" +
-//                            "rate = " + rate + "\n" +
-//                            "noPeriods = " + noPeriods + "\n" +
-//                            "repType = " + repType + "\n" +
-//                            "inputType = " + inputType + "\n" +
-//                            "repFreq = " + repFreq + "\n",
-//                        "Test", JOptionPane.INFORMATION_MESSAGE);
-
-
