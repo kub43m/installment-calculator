@@ -1,8 +1,5 @@
 package calculation;
 
-/**
- * Created by Kuba on 2015-12-30.
- */
 /* An implementation of Calculation interface modelling the situation where the capital part is paid at loan's maturity
  * and interest payments are made every period. */
 public class CapitalAtEndInterestPerPeriodCalc implements Calculation {

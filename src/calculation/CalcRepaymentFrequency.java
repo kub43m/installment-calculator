@@ -1,9 +1,5 @@
 package calculation;
 
-/**
- * Created by Kuba on 12/23/2015.
- */
-
 //Enum representing loan repayment frequency - it can be either monthly or yearly repayments
 public enum CalcRepaymentFrequency {
     MONTHLY, YEARLY;

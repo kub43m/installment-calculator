@@ -1,8 +1,5 @@
 package calculation;
 
-/**
- * Created by Kuba on 12/22/2015.
- */
 /* An implementation of Calculation interface modelling the situation where every period the same amount of capital is
  * paid (capital part of the installment is constant) and interest is paid every period based on the amount of debt
  * outstanding -> installments are decreasing every period */

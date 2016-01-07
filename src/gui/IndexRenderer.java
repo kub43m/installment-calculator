@@ -4,9 +4,7 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import java.text.NumberFormat;
 
-/**
- * Created by Kuba on 2015-12-30.
- */
+//Custom renderer to format JTable index cells to integers and center them
 public class IndexRenderer extends DefaultTableCellRenderer {
     private NumberFormat format;
 

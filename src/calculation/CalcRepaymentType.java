@@ -1,9 +1,5 @@
 package calculation;
 
-/**
- * Created by Kuba on 12/23/2015.
- */
-
 //Enum representing repayment strategies
 public enum CalcRepaymentType {
     CONSTANT_CAPITAL_PART,

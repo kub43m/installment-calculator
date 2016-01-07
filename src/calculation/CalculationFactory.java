@@ -1,8 +1,5 @@
 package calculation;
 
-/**
- * Created by Kuba on 2016-01-03.
- */
 /* Factory Class that takes user input parses it and creates an appropriate Calculation object */
 public class CalculationFactory {
 

@@ -1,9 +1,5 @@
 package calculation;
 
-/**
- * Created by Kuba on 12/22/2015.
- */
-
 import java.util.*;
 
 //Class that holds results of installments computation produced by object implementing Calculation interface

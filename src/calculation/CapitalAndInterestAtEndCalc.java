@@ -1,8 +1,5 @@
 package calculation;
 
-/**
- * Created by Kuba on 2015-12-30.
- */
 
 /* An implementation of Calculation interface modelling the situation where both the capital part and all of interest
  * are payed at loan's maturity. Interest is accrued every period meaning that it increases debt outstanding's value. */
