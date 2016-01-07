@@ -1,8 +1,5 @@
 package calculation;
 
-/**
- * Created by Kuba on 12/23/2015.
- */
 
 //Object holding results for a single period - it represents a single row in a detailed results table
 public class CalcTableItem {

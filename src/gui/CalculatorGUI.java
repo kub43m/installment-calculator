@@ -10,9 +10,7 @@ import java.awt.event.*;
 import java.text.NumberFormat;
 import java.util.List;
 
-/**
- * Created by Kuba on 12/27/2015.
- */
+
 public class CalculatorGUI {
 
     //initial values:

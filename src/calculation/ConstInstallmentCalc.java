@@ -1,8 +1,5 @@
 package calculation;
 
-/**
- * Created by Kuba on 12/23/2015.
- */
 /* An implementation of Calculation interface modelling the situation where every period the same installment is is paid
  * -> the capital part is increasing and interest part is decreasing every period.
  * The way to compute the value of constant installment for given parameters is described below */
